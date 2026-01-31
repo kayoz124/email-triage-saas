@@ -9,7 +9,7 @@ export default function Home() {
       <header className="container mx-auto px-4 py-6">
         <nav className="flex items-center justify-between">
           <h1 className="text-xl font-bold">EmailTriage</h1>
-          <Link href="/api/auth/signin">
+          <Link href="/api/auth/signin/google">
             <Button variant="outline">Sign In</Button>
           </Link>
         </nav>
@@ -25,7 +25,7 @@ export default function Home() {
             Stop drowning in emails. Let AI categorize, summarize, and draft
             replies so you can focus on what matters.
           </p>
-          <Link href="/api/auth/signin">
+          <Link href="/api/auth/signin/google">
             <Button size="lg" className="text-lg px-8 py-6">
               Start Free Trial
             </Button>
@@ -88,7 +88,7 @@ export default function Home() {
           <p className="text-muted-foreground mb-8">
             Join thousands of professionals who save hours every week.
           </p>
-          <Link href="/api/auth/signin">
+          <Link href="/api/auth/signin/google">
             <Button size="lg" variant="default">
               Get Started Free
             </Button>
