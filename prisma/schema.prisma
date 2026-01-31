@@ -1,6 +1,6 @@
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = "file:./dev.db"
 }
 
 generator client {
@@ -31,11 +31,11 @@ model Email {
   to            String
   subject       String
   snippet       String
-  body          String?   @db.Text
+  body          String?
 
   category      String    // urgent, important, fyi, spam
-  aiSummary     String?   @db.Text
-  draftReply    String?   @db.Text
+  aiSummary     String?
+  draftReply    String?
 
   isRead        Boolean   @default(false)
   isArchived    Boolean   @default(false)
