@@ -1,8 +1,5 @@
 import { NextAuthOptions } from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -19,35 +16,17 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async signIn({ user, account }) {
-      if (!user.email) return false;
-
-      // Store user and Gmail token
-      await prisma.user.upsert({
-        where: { email: user.email },
-        update: {
-          name: user.name,
-          image: user.image,
-          gmailToken: account?.access_token,
-        },
-        create: {
-          email: user.email,
-          name: user.name,
-          image: user.image,
-          gmailToken: account?.access_token,
-        },
-      });
-
-      return true;
+    async jwt({ token, account }) {
+      // Save Gmail access token to JWT
+      if (account?.access_token) {
+        token.accessToken = account.access_token;
+      }
+      return token;
     },
     async session({ session, token }) {
-      if (session.user && token.sub) {
-        const user = await prisma.user.findUnique({
-          where: { email: session.user.email! },
-        });
-        if (user) {
-          session.user.id = user.id;
-        }
+      // Add access token to session
+      if (token.accessToken) {
+        session.accessToken = token.accessToken as string;
       }
       return session;
     },
