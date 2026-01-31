@@ -1,0 +1,62 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String?
+  image         String?
+  gmailToken    String?   // Encrypted Gmail OAuth token
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  emails        Email[]
+  preferences   UserPreferences?
+}
+
+model Email {
+  id            String    @id @default(cuid())
+  userId        String
+  user          User      @relation(fields: [userId], references: [id])
+
+  gmailId       String    @unique
+  threadId      String
+  from          String
+  to            String
+  subject       String
+  snippet       String
+  body          String?   @db.Text
+
+  category      String    // urgent, important, fyi, spam
+  aiSummary     String?   @db.Text
+  draftReply    String?   @db.Text
+
+  isRead        Boolean   @default(false)
+  isArchived    Boolean   @default(false)
+  receivedAt    DateTime
+  processedAt   DateTime?
+
+  createdAt     DateTime  @default(now())
+
+  @@index([userId, category])
+  @@index([userId, receivedAt])
+}
+
+model UserPreferences {
+  id                String   @id @default(cuid())
+  userId            String   @unique
+  user              User     @relation(fields: [userId], references: [id])
+
+  digestFrequency   String   @default("daily") // daily, twice-daily, hourly
+  autoArchiveFyi    Boolean  @default(false)
+  draftReplies      Boolean  @default(true)
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
